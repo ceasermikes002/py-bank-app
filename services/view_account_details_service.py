@@ -12,7 +12,7 @@ class ViewAccountDetailsService:
         print(f"State of Origin: {account.state_of_origin}")
         print(f"Gender: {account.gender}")
         print(f"Account Creation Time: {account.account_creation_time}")
-        print(f"Account Balance: ${account.balance:.2f}")
+        print(f"Account Balance: ₦{account.balance:.2f}")
 
         # Check if the account has an ATM card
         if account.atm_card:

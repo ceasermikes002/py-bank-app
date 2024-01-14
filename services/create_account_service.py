@@ -1,9 +1,8 @@
 # services/create_account_service.py
 from models.account import Account
-from models.atm_card import ATMCard
-from services.create_atm_card_service import CreateATMCardService
 from utils.random_generator import generate_random_number
 from datetime import datetime
+
 class CreateAccountService:
     def __init__(self):
         pass
@@ -35,10 +34,6 @@ class CreateAccountService:
                 account_creation_time=account_creation_time
             )
             user.accounts.append(account)
-
-            # Create an ATM card for the account
-            atm_card_service = CreateATMCardService()
-            atm_card_service.execute(account)
 
             # Return the created account
             return account

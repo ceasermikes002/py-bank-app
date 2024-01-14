@@ -29,15 +29,20 @@ def main():
 
     user_name = input("What should we call you?: ")
     user = User(user_id=1, username=user_name, full_name=user_name)
+    account_created = False  # Flag to track if an account is created
 
     while user.is_active:
         display_menu()
 
-        choice = input("Enter your choice (1-11): ")
+        if account_created:
+            choice = input("You already have an account, enter your choice (2-11): ")  # Allow other actions if an account is created
+        else:
+            choice = input("You don't have an account, enter your choice (1, 11): ")  # Only allow creating an account or exiting if no account is created
 
         if choice == "1":
             create_account_service = CreateAccountService()
             account = create_account_service.execute(user)
+            account_created = True  # Set the flag to True after creating an account
             print(colorize(f"Account created successfully!\n"
                             f"Account Number: {account.account_id}\n"
                             f"Name: {account.name}\n"
@@ -47,25 +52,27 @@ def main():
                             f"Gender: {account.gender}\n"
                             f"Account Creation Time: {account.account_creation_time}", "blue"))
 
-        elif choice == "2":  # Include deposit service
+        elif not account_created and choice != "11":
+            print(colorize("You must create an account first.", "red"))
+            
+        # In the main function
+        elif choice == "2":
+            # Add deposit service
             deposit_service = DepositService()
-            amount = input("Enter the deposit amount: ")
-            deposit_service.execute(user, account, amount)
+            deposit_service.execute(user, account)
+
 
         elif choice == "3":
             withdraw_service = WithdrawService()
             amount = input("Enter the withdrawal amount: ")
             withdraw_service.execute(account, amount)
-
-        elif choice == "4":  # Include transfer service
+        
+        elif choice == "4":
+            # Add transfer service
             transfer_service = TransferService()
-            amount = input("Enter the transfer amount: ")
             beneficiary_name = input("Enter the beneficiary's name: ")
-            transfer_service.execute(user, account, amount, beneficiary_name)
-
-        elif choice == "5":  # Include view recent transfers service
-            view_recent_transfers_service = ViewRecentTransfersService()
-            view_recent_transfers_service.execute(account)
+            transfer_amount = input("Enter the transfer amount: ")
+            transfer_service.execute(account, beneficiary_name, transfer_amount)
 
         elif choice == "6":
             make_investments_service = MakeInvestmentsService()
@@ -73,7 +80,26 @@ def main():
             duration_months = input("Enter the investment duration (in months): ")
             make_investments_service.execute(account, amount, duration_months)
 
-        # Add handling for other menu options here...
+        elif choice == "5":
+            view_recent_transfers_service = ViewRecentTransfersService()
+            view_recent_transfers_service.execute(account)
+
+        elif choice == "7":
+            create_atm_card_service = CreateATMCardService()
+            create_atm_card_service.execute(account, user)
+
+        elif choice == "8":
+            view_account_details_service = ViewAccountDetailsService()
+            view_account_details_service.execute(account)
+
+        elif choice == "9":
+            view_all_investments_service = ViewAllInvestmentsService()
+            view_all_investments_service.execute(account)
+
+        elif choice == "10":
+            delete_account_service = DeleteAccountService()
+            delete_account_service.execute(user, account)
+            account_created = False  # Set the flag to False after deleting the account
 
         elif choice == "11":
             print(colorize("Thank you for using Your Banking App! Goodbye.", "green"))
@@ -81,9 +107,6 @@ def main():
 
         else:
             print(colorize("Invalid choice. Please enter a number between 1 and 11.", "red"))
-
-if __name__ == "__main__":
-    main()
 
 if __name__ == "__main__":
     main()
